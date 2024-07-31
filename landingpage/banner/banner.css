@@ -87,4 +87,25 @@
   text-overflow: ellipsis;
   line-height: 1.4;
   max-width: 100%;
+  display: -webkit-box;
+  line-clamp: 7;
+  -webkit-box-orient: vertical;
 }
+
+.description {
+  font-size: 20px;
+  margin: 0 0 -40% 0;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  line-clamp: 7;
+  -webkit-box-orient: vertical;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  max-width: 50%;
+}
+
