@@ -16,8 +16,8 @@ export default function TrendingSection({ width = "100%", height = "300px" }: Tr
           What's Cookin
         </h1>
       </div>
-      <div className="trending-section" style={{ maxWidth: width, height: height }}>
-        {Array.from({ length: 6 }).map((_, index) => (
+      <div className="trending-section" style={{ maxWidth: width, height: height ,overflowY:"hidden"}}>
+        {Array.from({ length: 10 }).map((_, index) => (
           <div key={index} className="flex-shrink-0 bloom-effect" style={{ width: "calc(100% / 5)" }}>
             <Card className="border-none p-0">
               <CardContent className="flex items-center justify-center p-0" style={{ height: "150px" }}>
