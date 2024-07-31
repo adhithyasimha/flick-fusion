@@ -48,16 +48,6 @@
   object-fit: cover;
 }
 
-.overlay::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 30px;
-  z-index: -1;
-}
-
 .overlay {
   position: absolute;
   top: 50%;
@@ -73,6 +63,13 @@
   justify-content: center;
 }
 
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px; /* Space between description and buttons */
+}
+
 .title {
   font-size: 36px;
   font-weight: bold;
@@ -81,31 +78,45 @@
 
 .description {
   font-size: 20px;
-  margin: 0 0 -40% 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.4;
-  max-width: 100%;
-  display: -webkit-box;
-  line-clamp: 7;
-  -webkit-box-orient: vertical;
-}
-
-.description {
-  font-size: 20px;
-  margin: 0 0 -40% 0;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  max-width: 100%;
+  max-width: 50%;
   display: -webkit-box;
-  -webkit-line-clamp: 7;
   line-clamp: 7;
   -webkit-box-orient: vertical;
   color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-  max-width: 50%;
 }
 
+.buttons {
+  display: flex;
+
+  gap: 10px;
+}
+
+.button {
+  background-color: #96161c; /* Default color for Play button */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer; /* Ensure cursor changes to pointer */
+  text-transform: uppercase;
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.button.info {
+  background-color: rgba(255, 255, 255, 0.7); /* Default color for Info button */
+  color: #000;
+}
+
+.button:hover {
+  background-color: #f40612; /* Hover color for Play button */
+}
+
+.button.info:hover {
+  background-color: rgba(0, 0, 0, 0.5); /* Hover color for Info button */
+}

@@ -10,6 +10,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
 
 interface MediaItem {
   id: number;
@@ -70,7 +71,7 @@ export function Banner() {
       >
         <CarouselContent>
           {mediaItems.map((item, index) => (
-            <CarouselItem key={index} className="carousel-item">
+            <CarouselItem key={item.id} className="carousel-item">
               <div className="carousel-item-content">
                 <Card className="card">
                   <CardContent className="card-content">
@@ -80,8 +81,14 @@ export function Banner() {
                       className="card-image"
                     />
                     <div className="overlay">
-                      <h2 className="title">{item.title}</h2>
-                      <p className="description">{item.description}</p>
+                      <div className="overlay-content">
+                        <h2 className="title">{item.title}</h2>
+                        <p className="description">{item.description}</p>
+                        <div className="buttons">
+                          <Button className="button">Play</Button>
+                          <Button variant={"outline"} className="button info">Info</Button>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -92,4 +99,5 @@ export function Banner() {
       </Carousel>
     </div>
   );
+  
 }
