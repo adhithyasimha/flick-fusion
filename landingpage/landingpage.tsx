@@ -4,6 +4,7 @@ import { Banner } from "./banner/banner";
 import TrendingSection from "./trending-section/trending-section";
 import Moviesection from "./movie-section/movie-section";
 import TvSection from "./tv-section/tv-section";
+import TopRatedSection from "./top-rated-section/top-section";
 
 export function Landingpage() {
   return (
@@ -13,6 +14,7 @@ export function Landingpage() {
       <TrendingSection/>
       <Moviesection/>
       <TvSection/>
+      <TopRatedSection/>
     </div>
   );
 }
