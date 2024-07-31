@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Autoplay from 'embla-carousel-autoplay';
 import './banner.css';
 
@@ -10,37 +11,77 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 
-export function Banner() {
-  const carouselStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-  };
+interface MediaItem {
+  id: number;
+  title: string;
+  description: string;
+  backdrop_path: string;
+}
 
+const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad";
+const MOVIE_API_URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`;
+const TV_API_URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_API_KEY}`;
+
+export function Banner() {
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const autoplayPlugin = React.useMemo(() => Autoplay({ delay: 5000, stopOnInteraction: true }), []);
+
+  useEffect(() => {
+    const fetchMediaItems = async () => {
+      try {
+        const [moviesResponse, tvResponse] = await Promise.all([
+          axios.get(MOVIE_API_URL),
+          axios.get(TV_API_URL),
+        ]);
+        const movies = moviesResponse.data.results.slice(0, 3);
+        const tvShows = tvResponse.data.results.slice(0, 3);
+
+        const combinedData: MediaItem[] = [
+          ...movies.map((movie: any) => ({
+            id: movie.id,
+            title: movie.title,
+            description: movie.overview,
+            backdrop_path: movie.backdrop_path,
+          })),
+          ...tvShows.map((show: any) => ({
+            id: show.id,
+            title: show.name,
+            description: show.overview,
+            backdrop_path: show.backdrop_path,
+          })),
+        ];
+
+        setMediaItems(combinedData);
+      } catch (error) {
+        console.error("Error fetching media items:", error);
+      }
+    };
+
+    fetchMediaItems();
+  }, []);
 
   return (
     <div className="banner-container">
-      <Carousel 
-        style={carouselStyle} 
+      <Carousel
+        style={{ width: '100%', height: '100%' }}
         className="relative"
         plugins={[autoplayPlugin]}
         onMouseEnter={() => autoplayPlugin.stop()}
-        onMouseLeave={() => autoplayPlugin.play()}
       >
         <CarouselContent>
-          {imageData.map((data, index) => (
+          {mediaItems.map((item, index) => (
             <CarouselItem key={index} className="carousel-item">
               <div className="carousel-item-content">
                 <Card className="card">
                   <CardContent className="card-content">
                     <img
-                      src={data.url}
+                      src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
                       alt={`Image ${index + 1}`}
                       className="card-image"
                     />
                     <div className="overlay">
-                      <h2 className="title">{data.title}</h2>
-                      <p className="description">{data.description}</p>
+                      <h2 className="title">{item.title}</h2>
+                      <p className="description">{item.description}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -52,21 +93,3 @@ export function Banner() {
     </div>
   );
 }
-
-const imageData = [
-  {
-    url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fincinemas.sg%2Fmovieshowtimes%2FOppenheimer%2Fbanner.jpg&f=1&nofb=1&ipt=86aeeba2e0fb1b725f80406d9ffd9fb964816a299c78f1f8a7816da041fa1428&ipo=images",
-    title: "Oppenheimer",
-    description: "A film about the life of J. Robert Oppenheimer and the creation of the atomic bomb."
-  },
-  {
-    url: "https://heroichollywood.com/wp-content/uploads/2016/02/Batman-v-Superman-Banner.jpg",
-    title: "Batman v Superman",
-    description: "The epic showdown between the Dark Knight and the Man of Steel."
-  },
-  {
-    url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmecinemas.com%2Fassets%2Fimg%2Fposters%2FTopGunMaveRick_banner.jpg&f=1&nofb=1&ipt=b2c235b2a14e0da4e687cd32fe4025fa412c4edbec845a5f734d9252467a3919&ipo=images",
-    title: "Top Gun: Maverick",
-    description: "The return of Maverick in the high-flying sequel to Top Gun."
-  }
-];
