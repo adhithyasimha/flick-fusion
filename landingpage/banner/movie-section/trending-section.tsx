@@ -1,6 +1,6 @@
 import React from 'react';
 import './trending-section.css';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface TrendingSectionProps {
