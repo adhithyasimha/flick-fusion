@@ -17,7 +17,7 @@ interface TVShow {
   genre_ids?: number[];
 }
 
-const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad"; 
+const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const TMDB_API_URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_API_KEY}`;
 
 export default function TvSection() {
@@ -49,7 +49,7 @@ export default function TvSection() {
   };
 
   return (
-    <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "2%" }}>
+    <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "3%" }}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
         <h1
           className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
@@ -67,6 +67,7 @@ export default function TvSection() {
           gap: "20px",
           maxWidth: "97%",
           height: "900px",
+
           overflow: "hidden",
           margin: 0,
           padding: 0,
@@ -149,7 +150,7 @@ export default function TvSection() {
             release_date: selectedShow.release_date || "N/A",
             original_language: selectedShow.original_language || "N/A",
             overview: selectedShow.overview || "No overview available.",
-            genres: [], // Optionally, add genre data if available
+            genres: [], 
             backdrop_path: selectedShow.backdrop_path || "",
           }}
         />

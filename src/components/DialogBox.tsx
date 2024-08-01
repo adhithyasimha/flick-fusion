@@ -12,6 +12,7 @@ interface DialogBoxProps {
     original_language?: string;
     genres?: { name: string }[];
     overview?: string;
+    description?: string; // Add the description property
   };
 }
 
@@ -52,7 +53,7 @@ export function DialogBox({ open, onClose, mediaDetails }: DialogBoxProps) {
             </DialogDescription>
           </DialogHeader>
           <div style={{ padding: "10px 0" }}>
-            <p style={{ fontSize: "14px" }}>{mediaDetails?.overview}</p>
+            <p style={{ fontSize: "14px" }}>{mediaDetails?.overview || mediaDetails?.description}</p>
           </div>
         </div>
       </DialogContent>

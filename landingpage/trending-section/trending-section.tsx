@@ -17,7 +17,7 @@ interface Media {
   genre_ids: number[];
 }
 
-const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad";
+const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const TMDB_API_URL = `https://api.themoviedb.org/3/trending/all/week?api_key=${TMDB_API_KEY}`;
 
 export default function TrendingSection({ width = "100%", height = "300px" }) {

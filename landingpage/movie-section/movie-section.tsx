@@ -17,7 +17,7 @@ interface Movie {
   genres?: { name: string }[];
 }
 
-const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad"; 
+const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const TMDB_API_URL = `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=en-US&page=1`;
 
 export default function Moviesection() {
