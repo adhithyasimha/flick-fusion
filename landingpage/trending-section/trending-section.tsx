@@ -58,6 +58,9 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
         style={{
           display: "flex",
           overflowX: "scroll",
+          overflowY: "hidden", // Hide vertical scrollbar
+          scrollbarWidth: "none", // Firefox scrollbar
+          msOverflowStyle: "none", // Internet Explorer and Edge
           maxWidth: width,
           height: height,
           zIndex: 1,
