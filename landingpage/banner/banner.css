@@ -1,99 +1,126 @@
+.banner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  
+  margin-bottom: -15%;
+}
+
 .banner-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 60vh;
-  margin-top: -8%;
+  margin-top: -6.2%;
+  margin-bottom: -2%;
   position: relative;
-  z-index: -1;
+  z-index: -1; /* Keep the banner behind */
+  border: none; /* Remove carousel borders */
 }
-
-.carousel-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.carousel-item-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
 .card {
   width: 100%;
   height: 100%;
   overflow: hidden;
   position: relative;
+  border: none; /* Remove card borders */
 }
 
+
 .card-content {
-  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  position: relative;
+  border: none; /* Remove card content borders */
+  z-index: 1;
 }
 
 .card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative; /* Ensure the pseudo-element is positioned relative to the card image */
+  /* Gradient mask for blending */
+  mask-image: linear-gradient(to bottom, transparent, black 10%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, transparent);
 }
 
+/* Gradient overlay */
+.card-image::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Adjust height of the gradient overlay */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 100%, /* Start the gradient 20px from the bottom */
+    rgba(0, 0, 0, 0.7) 100%,
+    rgba(0, 0, 0, 0) 100%
+  ); /* Adjust colors and gradient as needed */
+  z-index: 1; /* Ensure gradient overlay is above the image */
+}
 .overlay {
   position: absolute;
-  top: 50%;
+  top: 25%; /* Adjust this if needed to fit the content properly */
   left: 20px;
-  transform: translateY(-50%);
   color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   padding: 20px;
-  max-width: 50%;
+  max-width: 60%; /* Adjusted for better spacing */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Align items to the start (top) */
+  z-index: 1; /* Ensure overlay is above the banner */
 }
 
 .overlay-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px; /* Space between description and buttons */
+  justify-content: flex-start; /* Align items to the start (top) */
+  gap: 15px; /* Space between description and buttons */
 }
-
 .title {
   font-size: 36px;
   font-weight: bold;
-  margin: 0 0 10px 0; 
+  margin-top: 5%;
+  margin-bottom: 10px; /* Space below the title */
 }
 
 .description {
   font-size: 20px;
+  margin: 0;
   white-space: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  max-width: 50%;
+  max-width: 100%;
   display: -webkit-box;
-  line-clamp: 7;
+  -webkit-line-clamp: 5; /* Adjusted for approximately 20 words */
+  line-clamp: 5; /* Adjusted for approximately 20 words */
   -webkit-box-orient: vertical;
   color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  max-width: 50%;
 }
 
-.buttons {
+.buttons-container {
   display: flex;
-
-  gap: 10px;
+  gap: 10px; /* Space between buttons */
+  margin-top: -5%; /* Space between description and buttons */
+  margin-left: 3%;
+  align-self: flex-start; /* Align buttons to the start of the overlay */
+  z-index: 2; /* Ensure buttons are above the overlay */
 }
 
 .button {
@@ -103,7 +130,7 @@
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 5px;
-  cursor: pointer; /* Ensure cursor changes to pointer */
+  cursor: pointer;
   text-transform: uppercase;
   transition: background-color 0.3s ease; /* Smooth transition */
 }
@@ -118,5 +145,5 @@
 }
 
 .button.info:hover {
-  background-color: rgba(0, 0, 0, 0.5); /* Hover color for Info button */
+  background-color: rgba(255, 255, 255, 0.5); /* Hover color for Info button */
 }

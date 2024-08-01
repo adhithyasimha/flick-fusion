@@ -1,15 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Autoplay from 'embla-carousel-autoplay';
 import './banner.css';
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 
 interface MediaItem {
@@ -24,80 +18,63 @@ const MOVIE_API_URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=$
 const TV_API_URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_API_KEY}`;
 
 export function Banner() {
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const autoplayPlugin = React.useMemo(() => Autoplay({ delay: 5000, stopOnInteraction: true }), []);
+  const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
 
   useEffect(() => {
-    const fetchMediaItems = async () => {
+    const fetchMediaItem = async () => {
       try {
-        const [moviesResponse, tvResponse] = await Promise.all([
+        const [movieResponse, tvResponse] = await Promise.all([
           axios.get(MOVIE_API_URL),
           axios.get(TV_API_URL),
         ]);
-        const movies = moviesResponse.data.results.slice(0, 3);
-        const tvShows = tvResponse.data.results.slice(0, 3);
 
-        const combinedData: MediaItem[] = [
-          ...movies.map((movie: any) => ({
-            id: movie.id,
-            title: movie.title,
-            description: movie.overview,
-            backdrop_path: movie.backdrop_path,
-          })),
-          ...tvShows.map((show: any) => ({
-            id: show.id,
-            title: show.name,
-            description: show.overview,
-            backdrop_path: show.backdrop_path,
-          })),
-        ];
+        const topMovie = movieResponse.data.results[0];
+        const topTvShow = tvResponse.data.results[0];
 
-        setMediaItems(combinedData);
+        const item = Math.random() > 0.5 ? topMovie : topTvShow;
+        const mediaItem: MediaItem = {
+          id: item.id,
+          title: item.title || item.name,
+          description: item.overview,
+          backdrop_path: item.backdrop_path,
+        };
+
+        setMediaItem(mediaItem);
       } catch (error) {
-        console.error("Error fetching media items:", error);
+        console.error("Error fetching media item:", error);
       }
     };
 
-    fetchMediaItems();
+    fetchMediaItem();
   }, []);
 
+  if (!mediaItem) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="banner-container">
-      <Carousel
-        style={{ width: '100%', height: '100%' }}
-        className="relative"
-        plugins={[autoplayPlugin]}
-        onMouseEnter={() => autoplayPlugin.stop()}
-      >
-        <CarouselContent>
-          {mediaItems.map((item, index) => (
-            <CarouselItem key={item.id} className="carousel-item">
-              <div className="carousel-item-content">
-                <Card className="card">
-                  <CardContent className="card-content">
-                    <img
-                      src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
-                      alt={`Image ${index + 1}`}
-                      className="card-image"
-                    />
-                    <div className="overlay">
-                      <div className="overlay-content">
-                        <h2 className="title">{item.title}</h2>
-                        <p className="description">{item.description}</p>
-                        <div className="buttons">
-                          <Button className="button">Play</Button>
-                          <Button variant={"outline"} className="button info">Info</Button>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+    <div className="banner-wrapper">
+      <div className="banner-container">
+        <Card className="card">
+          <CardContent className="card-content">
+            <img
+              src={`https://image.tmdb.org/t/p/original${mediaItem.backdrop_path}`}
+              alt={`Image of ${mediaItem.title}`}
+              className="card-image"
+            />
+            <div className="overlay">
+              <div className="overlay-content">
+                <h2 className="title">{mediaItem.title}</h2>
+                <p className="description">{mediaItem.description}</p>
               </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="buttons-container">
+        <Button className="button">Play</Button>
+        <Button variant="outline" className="button info">Info</Button>
+      </div>
     </div>
   );
-  
 }
