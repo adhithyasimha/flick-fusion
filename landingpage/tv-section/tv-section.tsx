@@ -1,13 +1,20 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
 
 interface TVShow {
   id: number;
   name: string;
   poster_path: string;
+  backdrop_path?: string;
+  overview?: string;
+  release_date?: string;
+  original_language?: string;
+  genre_ids?: number[];
 }
 
 const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad"; 
@@ -16,6 +23,7 @@ const TMDB_API_URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMD
 export default function TvSection() {
   const [tvShows, setTvShows] = useState<TVShow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedShow, setSelectedShow] = useState<TVShow | null>(null);
 
   useEffect(() => {
     const fetchTvShows = async () => {
@@ -32,8 +40,16 @@ export default function TvSection() {
     fetchTvShows();
   }, []);
 
+  const handleCardClick = (show: TVShow) => {
+    setSelectedShow(show);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedShow(null);
+  };
+
   return (
-    <div style={{ margin: "-25px 0 0 0", padding: 0,marginLeft:"2%" }}>
+    <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "2%" }}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
         <h1
           className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
@@ -81,11 +97,12 @@ export default function TvSection() {
               </div>
             ))
           : tvShows.map((show) => (
-              <div key={show.id} className="bloom-effect">
+              <div key={show.id} className="bloom-effect" onClick={() => handleCardClick(show)}>
                 <Card
                   style={{
                     border: "none",
                     padding: 0,
+                    cursor: "pointer",
                   }}
                 >
                   <CardContent
@@ -122,6 +139,21 @@ export default function TvSection() {
               </div>
             ))}
       </div>
+
+      {selectedShow && (
+        <DialogBox
+          open={!!selectedShow}
+          onClose={handleCloseDialog}
+          mediaDetails={{
+            title: selectedShow.name,
+            release_date: selectedShow.release_date || "N/A",
+            original_language: selectedShow.original_language || "N/A",
+            overview: selectedShow.overview || "No overview available.",
+            genres: [], // Optionally, add genre data if available
+            backdrop_path: selectedShow.backdrop_path || "",
+          }}
+        />
+      )}
     </div>
   );
 }

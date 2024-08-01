@@ -27,7 +27,7 @@ export function DialogBox({ open, onClose, mediaDetails }: DialogBoxProps) {
       <DialogTrigger asChild>
         <div style={{ height: "0px" }}></div>
       </DialogTrigger>
-      <DialogContent style={{ maxWidth: "55%", padding: "1px", border: "none", marginTop: "-2%" }}>
+      <DialogContent style={{ maxWidth: "53%", padding: "1px", border: "none", marginTop: "-2%" }}>
         {mediaDetails?.backdrop_path && (
           <div style={{ marginBottom: "20px", overflow: "hidden", position: "relative" }}>
             <img

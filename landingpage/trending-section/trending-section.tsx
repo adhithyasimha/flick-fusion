@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DialogBox } from "@/components/DialogBox";
-import './trending-section.css';
+import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
 
 interface Media {
   id: number;
@@ -13,9 +12,9 @@ interface Media {
   name?: string;
   backdrop_path: string;
   overview: string;
-  release_date?: string;
-  original_language?: string;
-  genre_ids?: number[];
+  release_date: string;
+  original_language: string;
+  genre_ids: number[];
 }
 
 const TMDB_API_KEY = "1fc90dcd6c360d40d68b297f7b0e41ad";
@@ -52,9 +51,7 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
   return (
     <div style={{ margin: "0", padding: "0", marginLeft: "2%", marginBottom: "10px" }}>
       <div className="heading-section" style={{ marginTop: "20%", padding: "0" }}>
-        <h1 className="scroll-m-20 font-semibold tracking-tight">
-          What's Cookin
-        </h1>
+        <h1 className="scroll-m-20 font-semibold tracking-tight">What's Cookin</h1>
       </div>
       <div
         className="trending-section"
@@ -71,11 +68,25 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
           ? Array.from({ length: 10 }).map((_, index) => (
               <div
                 key={index}
-                className="flex-shrink-0 trending-card bloom-effect"
+                className="flex-shrink-0 bloom-effect"
                 style={{ width: "calc(100% / 5)", marginRight: "10px" }}
               >
-                <Card style={{ border: "none", padding: 0 }}>
-                  <CardContent style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 0, height: "150px" }}>
+                <Card
+                  style={{
+                    border: "none",
+                    padding: 0,
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 0,
+                      height: "150px",
+                      border: "none",
+                    }}
+                  >
                     <Skeleton className="w-full h-full" />
                   </CardContent>
                 </Card>
@@ -84,12 +95,27 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
           : trendingItems.map((item) => (
               <div
                 key={item.id}
-                className="flex-shrink-0 trending-card bloom-effect"
+                className="flex-shrink-0 bloom-effect"
                 style={{ width: "calc(100% / 5)", marginRight: "10px" }}
-                onClick={() => handleCardClick(item)}
               >
-                <Card style={{ border: "none", padding: 0 }}>
-                  <CardContent style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 0, height: "150px" }}>
+                <Card
+                  style={{
+                    border: "none",
+                    padding: 0,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleCardClick(item)}
+                >
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 0,
+                      height: "150px",
+                      border: "none",
+                    }}
+                  >
                     <img
                       src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
                       alt={item.title || item.name}
@@ -117,15 +143,16 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
 
       {selectedItem && (
         <DialogBox
+          open={!!selectedItem}
+          onClose={handleCloseDialog}
           mediaDetails={{
             title: selectedItem.title || selectedItem.name,
             release_date: selectedItem.release_date,
             original_language: selectedItem.original_language,
             overview: selectedItem.overview,
-            genres: selectedItem.genre_ids?.map(id => ({ name: `Genre ${id}` })) // Placeholder for genre names
+            genres: [], // Optionally, add genre data if available
+            backdrop_path: selectedItem.backdrop_path,
           }}
-          open={!!selectedItem}
-          onClose={handleCloseDialog}
         />
       )}
     </div>
