@@ -33,18 +33,50 @@ export default function Moviesection() {
   }, []);
 
   return (
-    <div style={{ margin: "-25px 0 0 0", padding: 0 }}>
+    <div style={{ margin: "-25px 0 0 0", padding: 0 ,marginLeft:"2%"}}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
-        <h1 className="scroll-m-20 font-semibold tracking-tight md: 'xl'" style={{ marginTop: "-8%", marginBottom: "2%" }}>
+        <h1
+          className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
+          style={{ marginTop: "-8%", marginBottom: "2%" }}
+        >
           Cinema
         </h1>
       </div>
-      <div className="movie-section" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gridTemplateRows: "repeat(3, 250px)", gap: "15px", maxWidth: "100%", height: "900px", overflow: "hidden", margin: 0, padding: 0 }}>
+      <div
+        className="movie-section"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(6, 1fr)",
+          gridTemplateRows: "repeat(3, 250px)",
+          gap: "15px",
+          maxWidth: "97%",
+          
+          height: "900px",
+          overflow: "hidden",
+          margin: 0,
+          padding: 0,
+          
+        }}
+      >
         {loading || !movies.length
-          ? Array.from({ length: 18 }).map((_, index) => ( // Change to 18 skeletons
+          ? Array.from({ length: 18 }).map((_, index) => (
               <div key={index} className="bloom-effect">
-                <Card className="border-none p-0">
-                  <CardContent className="flex items-center justify-center p-0" style={{ height: "250px" }}>
+                <Card
+                  style={{
+                    border: "none",
+                    padding: 0,
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 0,
+                      height: "250px",
+                      border: "none",
+                    }}
+                  >
                     <Skeleton className="w-full h-full" />
                   </CardContent>
                 </Card>
@@ -52,8 +84,22 @@ export default function Moviesection() {
             ))
           : movies.map((movie) => (
               <div key={movie.id} className="bloom-effect">
-                <Card className="border-none p-0">
-                  <CardContent className="flex items-center justify-center p-0" style={{ height: "250px" }}>
+                <Card
+                  style={{
+                    border: "none",
+                    padding: 0,
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 0,
+                      height: "250px",
+                      border: "none",
+                    }}
+                  >
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
