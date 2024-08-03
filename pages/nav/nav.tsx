@@ -123,9 +123,10 @@ const genre: ComponentType[] = [
 type ListItemProps = {
   className?: string;
   title: string;
-  children: React.ReactNode;
   href: string;
+  children?: React.ReactNode;  
 };
+
 
 const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
   ({ className, title, href = "" }, ref) => {
@@ -149,6 +150,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
   }
 );
 ListItem.displayName = "ListItem";
+
 interface SearchResult {
   id: number;
   title?: string;
@@ -220,9 +222,10 @@ export function Topnav() {
                 <NavigationMenuTrigger>Genre</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-0 p-4 md:w-[300px] md:grid-cols-2 lg:w-[350px]">
-                    {genre.map((genre) => (
-                      <ListItem key={genre.id} title={genre.name} href={`/genre/${genre.id}`} children={undefined} />
-                    ))}
+                  {genre.map((genre) => (
+  <ListItem key={genre.id} title={genre.name} href={`/genre/${genre.id}`} />
+))}
+
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>

@@ -70,7 +70,7 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
   return (
     <div style={{ margin: "0", padding: "0", marginLeft: "2%", marginBottom: "10px" }}>
       <div className="heading-section" style={{ marginTop: "20%", padding: "0" }}>
-        <h1 className="scroll-m-20 font-semibold tracking-tight">What's Cookin</h1>
+        <h1 className="scroll-m-20 font-semibold tracking-tight">What&apos;s Cookin</h1>
       </div>
       <div
         className="trending-section"
