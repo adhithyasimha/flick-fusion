@@ -9,10 +9,21 @@
   font-size: 1rem;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
 .search-bar {
-  max-width: 300px;
-  margin-right:1rem; /* Space between search bar and button */
+  width: 150px; /* Initial width */
+  transition: width 0.3s ease-in-out; /* Smooth transition */
+  margin-right: 1rem; /* Space between search bar and button */
   border: 0.5px solid white;
+}
+
+.search-bar.expanded {
+  width: 250px; /* Expanded width */
 }
 
 .logout-button {
@@ -29,9 +40,18 @@
     margin-bottom: 1rem;
   }
 
+  .nav-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .search-bar {
-    max-width: 100%;
+    width: 100%;
     margin: 0 0 1rem 0;
+  }
+
+  .search-bar.expanded {
+    width: 100%;
   }
 
   .logout-button {
