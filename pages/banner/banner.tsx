@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from 'next/navigation';
 import './banner.css';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,34 +17,27 @@ interface MediaItem {
 }
 
 const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
-const MOVIE_API_URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`;
-const TV_API_URL = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_API_KEY}`;
+const POPULAR_MOVIE_API_URL = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}`;
+const POST_CONTENT_API_URL = '/api/content';
 
 export function Banner() {
   const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchMediaItem = async () => {
       try {
-        const [movieResponse, tvResponse] = await Promise.all([
-          axios.get(MOVIE_API_URL),
-          axios.get(TV_API_URL),
-        ]);
-
-        const topMovie = movieResponse.data.results[0];
-        const topTvShow = tvResponse.data.results[0];
-
-        const item = Math.random() > 0.5 ? topMovie : topTvShow;
+        const response = await axios.get(POPULAR_MOVIE_API_URL);
+        const topMovie = response.data.results[0];
         const mediaItem: MediaItem = {
-          id: item.id,
-          title: item.title || item.name,
-          description: item.overview,
-          backdrop_path: item.backdrop_path,
-          release_date: item.release_date,
-          original_language: item.original_language,
+          id: topMovie.id,
+          title: topMovie.title,
+          description: topMovie.overview,
+          backdrop_path: topMovie.backdrop_path,
+          release_date: topMovie.release_date,
+          original_language: topMovie.original_language,
         };
-
         setMediaItem(mediaItem);
       } catch (error) {
         console.error("Error fetching media item:", error);
@@ -52,6 +46,25 @@ export function Banner() {
 
     fetchMediaItem();
   }, []);
+
+  const postContentData = async (id: number, mediaType: string) => {
+    const dataToSend = { id, media_type: mediaType };
+    try {
+      await axios.post(POST_CONTENT_API_URL, dataToSend);
+    } catch (error) {
+      console.error("Error posting content data:", error);
+    }
+  };
+
+  const handlePlayClick = () => {
+    if (mediaItem) {
+      localStorage.setItem('movieId', mediaItem.id.toString());
+      postContentData(mediaItem.id, 'movie');
+      router.push('/player');
+    } else {
+      console.error("No media item available to play");
+    }
+  };
 
   const handleInfoClick = () => {
     setDialogOpen(true);
@@ -85,7 +98,7 @@ export function Banner() {
         </Card>
       </div>
       <div className="buttons-container">
-        <Button className="button" variant={"destructive"}>Play</Button>
+        <Button className="button" variant={"destructive"} onClick={handlePlayClick}>Play</Button>
         <Button variant="outline" className="button info" onClick={handleInfoClick}>Info</Button>
       </div>
 
