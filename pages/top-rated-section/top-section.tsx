@@ -49,6 +49,21 @@ export default function TopRatedSection({ width = "100%", height = "300px" }) {
     setSelectedItem(null);
   };
 
+  const handlePlayClick = async () => {
+    if (selectedItem) {
+      try {
+        await axios.post('/api/content', {
+          id: selectedItem.id,
+          media_type: 'movie', // Assuming this section is for movies
+        });
+        // Redirect to Player page after posting
+        window.location.href = '/player';
+      } catch (error) {
+        console.error("Error posting content data:", error);
+      }
+    }
+  };
+
   return (
     <div style={{ margin: "0", padding: "0", marginLeft: "2%" }}>
       <div className="heading-section" style={{ marginTop: "-20%", padding: "0" }}>
@@ -120,6 +135,7 @@ export default function TopRatedSection({ width = "100%", height = "300px" }) {
         <DialogBox
           open={!!selectedItem}
           onClose={handleCloseDialog}
+          onPlayClick={handlePlayClick}
           mediaDetails={{
             title: selectedItem.title || selectedItem.name,
             release_date: selectedItem.release_date,
