@@ -118,7 +118,7 @@
 .buttons-container {
   display: flex;
   gap: 10px; /* Space between buttons */
-  margin-top: -15%; /* Space between description and buttons */
+  margin-top: -12%; /* Space between description and buttons */
   margin-left: 3%;
   align-self: flex-start; /* Align buttons to the start of the overlay */
   z-index: 2; /* Ensure buttons are above the overlay */
