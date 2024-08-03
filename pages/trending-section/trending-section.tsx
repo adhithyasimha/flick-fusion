@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
@@ -25,6 +26,7 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
   const [trendingItems, setTrendingItems] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState<Media | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTrendingItems = async () => {
@@ -49,9 +51,19 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
     setSelectedItem(null);
   };
 
-  const handlePlayClick = () => {
+  const handlePlayClick = async () => {
     if (selectedItem) {
-      console.log(`POST method message: { id: ${selectedItem.id}, media_type: ${selectedItem.media_type} }`);
+      try {
+        await axios.post('/api/content', {
+          id: selectedItem.id,
+          media_type: selectedItem.media_type,
+        });
+        router.push(`/player`);
+      } catch (error) {
+        console.error("Error posting content data:", error);
+      }
+    } else {
+      console.error("No media item selected to play");
     }
   };
 
