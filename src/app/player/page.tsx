@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { AspectRatio } from '@/components/ui/aspect-ratio'; // Import AspectRatio component
 
 export default function Player() {
   const [playerUrl, setPlayerUrl] = useState('');
@@ -38,16 +39,16 @@ export default function Player() {
 
   return (
     <div className="player-container">
-      <iframe 
-        style={{marginTop: '5px', padding: '0px'}}
-        src={playerUrl}
-        title="Player"
-        width="100%"
-        height="500vh"
-        allowFullScreen
-        allow="autoplay"
-        referrerPolicy="origin"
-      ></iframe>
+      <AspectRatio ratio={16 / 9} className="bg-muted">
+        <iframe 
+          src={playerUrl}
+          title="Player"
+          allowFullScreen
+          allow="autoplay"
+          referrerPolicy="origin"
+          style={{ width: '100%', height: '100%', border: 'none' }} // Ensure iframe fits within the AspectRatio container
+        ></iframe>
+      </AspectRatio>
     </div>
   );
 }
