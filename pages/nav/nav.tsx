@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ForwardedRef } from "react";
+import React, { useState, ForwardedRef,useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -149,17 +149,60 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(
   }
 );
 ListItem.displayName = "ListItem";
+interface SearchResult {
+  id: number;
+  title?: string;
+  name?: string;
+  media_type: 'movie' | 'tv';
+  poster_path?: string;
+  release_date?: string;
+  first_air_date?: string;
+}
 
 export function Topnav() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
   const handleSearchClick = () => {
     setIsExpanded(true);
   };
 
   const handleBlur = () => {
-    setIsExpanded(false);
+    setTimeout(() => {
+      setIsExpanded(false);
+      setSearchResults([]);
+    }, 200);
   };
+
+  useEffect(() => {
+    const searchMoviesAndTVShows = async () => {
+      if (searchQuery.length > 0) {
+        const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+        try {
+          const response = await fetch(
+            `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&query=${searchQuery}`
+          );
+          const data = await response.json();
+          const filteredResults = data.results.filter(
+            (result: SearchResult) => result.media_type === 'movie' || result.media_type === 'tv'
+          );
+          setSearchResults(filteredResults.slice(0, 5));
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+          setSearchResults([]);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    };
+
+    const debounce = setTimeout(() => {
+      searchMoviesAndTVShows();
+    }, 300);
+
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   return (
     <div>
@@ -200,13 +243,28 @@ export function Topnav() {
             </NavigationMenuList>
           </NavigationMenu>
         </div>
+       
         <div className="nav-right">
-          <Input
-            className={`search-bar ${isExpanded ? 'expanded' : ''}`}
-            placeholder="Search..."
-            onClick={handleSearchClick}
-            onBlur={handleBlur}
-          />
+          <div className="search-container">
+            <Input
+              className={`search-bar ${isExpanded ? 'expanded' : ''}`}
+              placeholder="Search movies and TV shows..."
+              onClick={handleSearchClick}
+              onBlur={handleBlur}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {isExpanded && searchResults.length > 0 && (
+              <div className="search-results">
+                {searchResults.map((result) => (
+                  <div key={result.id} className="search-result-item">
+                    {result.media_type === 'movie' ? result.title : result.name}
+                    <span className="media-type">({result.media_type})</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <Button variant="destructive" className="logout-button">
             Logout
           </Button>
