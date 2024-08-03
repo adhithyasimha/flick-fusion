@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
@@ -24,6 +25,7 @@ export default function TvSection() {
   const [tvShows, setTvShows] = useState<TVShow[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedShow, setSelectedShow] = useState<TVShow | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTvShows = async () => {
@@ -48,6 +50,22 @@ export default function TvSection() {
     setSelectedShow(null);
   };
 
+  const handlePlayClick = async () => {
+    if (selectedShow) {
+      try {
+        await axios.post('/api/content', {
+          id: selectedShow.id,
+          media_type: 'tv',
+        });
+        router.push(`/player`);
+      } catch (error) {
+        console.error("Error posting content data:", error);
+      }
+    } else {
+      console.error("No TV show selected to play");
+    }
+  };
+
   return (
     <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "3%" }}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
@@ -67,7 +85,6 @@ export default function TvSection() {
           gap: "20px",
           maxWidth: "97%",
           height: "900px",
-
           overflow: "hidden",
           margin: 0,
           padding: 0,
@@ -98,7 +115,11 @@ export default function TvSection() {
               </div>
             ))
           : tvShows.map((show) => (
-              <div key={show.id} className="bloom-effect" onClick={() => handleCardClick(show)}>
+              <div
+                key={show.id}
+                className="bloom-effect"
+                onClick={() => handleCardClick(show)}
+              >
                 <Card
                   style={{
                     border: "none",
@@ -121,14 +142,16 @@ export default function TvSection() {
                       alt={show.name}
                       className="w-full h-full object-cover"
                       onLoad={(e) => {
-                        const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
+                        const skeleton =
+                          e.currentTarget.nextElementSibling as HTMLElement;
                         if (skeleton) {
                           skeleton.style.display = "none";
                         }
                       }}
                       onError={(e) => {
                         e.currentTarget.style.display = "none";
-                        const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
+                        const skeleton =
+                          e.currentTarget.nextElementSibling as HTMLElement;
                         if (skeleton) {
                           skeleton.style.display = "block";
                         }
@@ -145,12 +168,13 @@ export default function TvSection() {
         <DialogBox
           open={!!selectedShow}
           onClose={handleCloseDialog}
+          onPlayClick={handlePlayClick}
           mediaDetails={{
             title: selectedShow.name,
             release_date: selectedShow.release_date || "N/A",
             original_language: selectedShow.original_language || "N/A",
             overview: selectedShow.overview || "No overview available.",
-            genres: [], 
+            genres: [], // You can include genres if available
             backdrop_path: selectedShow.backdrop_path || "",
           }}
         />
