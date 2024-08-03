@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 interface DialogBoxProps {
@@ -14,9 +14,10 @@ interface DialogBoxProps {
     overview?: string;
     description?: string; // Add the description property
   };
+  onPlayClick: () => void; // Add onPlayClick prop
 }
 
-export function DialogBox({ open, onClose, mediaDetails }: DialogBoxProps) {
+export function DialogBox({ open, onClose, mediaDetails, onPlayClick }: DialogBoxProps) {
   // Extract year from release_date
   const releaseYear = mediaDetails.release_date ? mediaDetails.release_date.split("-")[0] : "N/A";
 
@@ -41,7 +42,7 @@ export function DialogBox({ open, onClose, mediaDetails }: DialogBoxProps) {
           </div>
         )}
         <div style={{ textAlign: "center", marginBottom: "5px", marginRight: "85%" }}>
-          <Button variant="destructive">Play</Button>
+          <Button variant="destructive" onClick={onPlayClick}>Play</Button>
         </div>
         <div style={{ background: "#000000", padding: "20px" }}>
           <DialogHeader>

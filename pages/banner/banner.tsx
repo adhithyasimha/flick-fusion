@@ -112,6 +112,7 @@ export function Banner() {
           release_date: mediaItem.release_date,
           original_language: mediaItem.original_language,
         }}
+        onPlayClick={handlePlayClick} // Add onPlayClick prop
       />
     </div>
   );

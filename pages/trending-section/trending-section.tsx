@@ -15,6 +15,7 @@ interface Media {
   release_date: string;
   original_language: string;
   genre_ids: number[];
+  media_type: string; // Add media_type to the Media interface
 }
 
 const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
@@ -46,6 +47,12 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
 
   const handleCloseDialog = () => {
     setSelectedItem(null);
+  };
+
+  const handlePlayClick = () => {
+    if (selectedItem) {
+      console.log(`POST method message: { id: ${selectedItem.id}, media_type: ${selectedItem.media_type} }`);
+    }
   };
 
   return (
@@ -156,6 +163,7 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
             genres: [], // Optionally, add genre data if available
             backdrop_path: selectedItem.backdrop_path,
           }}
+          onPlayClick={handlePlayClick} // Pass handlePlayClick to DialogBox
         />
       )}
     </div>
