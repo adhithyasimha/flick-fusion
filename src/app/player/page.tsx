@@ -30,6 +30,23 @@ export default function Player() {
     fetchContentData();
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedId = localStorage.getItem('movieId');
+      const storedMediaType = localStorage.getItem('mediaType') || 'movie';
+      if (storedId) {
+        const url = `https://vidsrc.net/embed/${storedMediaType}/${storedId}?autoplay=1`;
+        setPlayerUrl(url);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   if (error) {
     return <div>{error}</div>;
   }
