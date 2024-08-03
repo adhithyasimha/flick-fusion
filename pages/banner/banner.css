@@ -124,17 +124,7 @@
   z-index: 2; /* Ensure buttons are above the overlay */
 }
 
-.button {
-  
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
 
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: background-color 0.3s ease; /* Smooth transition */
-}
 
 .button.info {
   background-color: rgba(255, 255, 255, 0.7); /* Default color for Info button */

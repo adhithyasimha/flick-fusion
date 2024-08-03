@@ -30,7 +30,7 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
     const fetchTrendingItems = async () => {
       try {
         const response = await axios.get(TMDB_API_URL);
-        setTrendingItems(response.data.results.slice(0, 10)); // Limit to 10 items
+        setTrendingItems(response.data.results.slice(1, 11)); // Limit to 10 items starting from the second one
       } catch (error) {
         console.error("Error fetching trending items:", error);
       } finally {
