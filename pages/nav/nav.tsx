@@ -242,14 +242,14 @@ export function Topnav() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/movie" legacyBehavior passHref>
+                <Link href="/movies" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     Movies
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/docs" legacyBehavior passHref>
+                <Link href="tvshows" legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     TV
                   </NavigationMenuLink>
@@ -263,7 +263,7 @@ export function Topnav() {
           <div className="search-container">
             <Input
               className={`search-bar ${isExpanded ? 'expanded' : ''}`}
-              placeholder="Search movies and TV shows..."
+              placeholder="Search..."
               onClick={() => setIsExpanded(true)}
               onBlur={() => {
                 setTimeout(() => setIsExpanded(false), 200);
@@ -281,7 +281,7 @@ export function Topnav() {
                       e.preventDefault();
                       const requestBody = {
                         id: result.id,
-                        mediaType: result.media_type,
+                        media_type: result.media_type,
                       };
                       console.log('Sending request with body:', requestBody);
                       fetch('/api/content', {
