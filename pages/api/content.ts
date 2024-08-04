@@ -1,5 +1,4 @@
-
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 // This variable will store the latest content data
 let latestContentData = {
@@ -15,6 +14,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
 
     case 'POST':
+      // Log the entire body of the request to debug the issue
+      console.log('Received POST request body:', req.body);
+      
       // Process the POST request
       const { id, media_type } = req.body;
       
