@@ -125,54 +125,53 @@ export default function Moviesection() {
       </h1>
     </div>
     <div
-      className="movie-section"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(6, 1fr)",
-        gridAutoRows: "310px", // Set a consistent row height
-        gap: "10px",
-        maxWidth: "97%",
-        height: "950px",
-        overflow: "hidden",
-        margin: 0,
-      }}
-    >
-        {loading || !movies.length
-          ? Array.from({ length: 18 }).map((_, index) => (
-              <div key={index} className="bloom-effect">
-                <Card style={{ border: "none", padding: 0 }}>
-                  <CardContent
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 0,
-                      height: "300px",
-                      border: "none",
-                    }}
+  className="movie-section"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(6, 1fr)",
+    gridAutoRows: "310px", // Set a consistent row height
+    gap: "15px",
+    maxWidth: "97%",
+    height: "950px",
+    overflow: "hidden",
+    margin: 0,
+  }}
+>
+  {loading || !movies.length
+    ? Array.from({ length: 18 }).map((_, index) => (
+        <div key={index} className="bloom-effect">
+          <Card style={{ border: "none", padding: 0 }}>
+            <CardContent
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
+                height: "300px", // Increased card height
+                border: "none",
+              }}
                   >
                     <Skeleton className="w-full h-full" />
-                  </CardContent>
-                </Card>
-              </div>
-            ))
-          : movies.map((movie) => (
-              <div
-                key={movie.id}
-                className="bloom-effect"
-                onClick={() => handleCardClick(movie)}
-              >
-                <Card style={{ border: "none", padding: 0 }}>
-                  <CardContent
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: "0",
-                      height: "300px",
-                      border: "none",
-                    
-                    }}
+            </CardContent>
+          </Card>
+        </div>
+      ))
+    : movies.map((movie) => (
+        <div
+          key={movie.id}
+          className="bloom-effect"
+          onClick={() => handleCardClick(movie)}
+        >
+          <Card style={{ border: "none", padding: 0 }}>
+            <CardContent
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0",
+                height: "310px", 
+                border: "none",
+              }}
                   >
                     <img
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
