@@ -67,7 +67,7 @@ export default function TvSection() {
   };
 
   return (
-    <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "3%" }}>
+    <div style={{ margin: "6% 0 0 0", padding: 0, marginLeft: "3%" }}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
         <h1
           className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
@@ -81,13 +81,12 @@ export default function TvSection() {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(6, 1fr)",
-          gridTemplateRows: "repeat(3, 250px)",
-          gap: "20px",
+          gridAutoRows: "310px", // Set a consistent row height
+          gap: "15px",
           maxWidth: "97%",
-          height: "900px",
+          height: "950px",
           overflow: "hidden",
           margin: 0,
-          padding: 0,
         }}
       >
         {loading || !tvShows.length
@@ -105,7 +104,7 @@ export default function TvSection() {
                       alignItems: "center",
                       justifyContent: "center",
                       padding: 0,
-                      height: "250px",
+                      height: "300px",
                       border: "none",
                     }}
                   >
@@ -133,7 +132,7 @@ export default function TvSection() {
                       alignItems: "center",
                       justifyContent: "center",
                       padding: 0,
-                      height: "250px",
+                      height: "310px",
                       border: "none",
                     }}
                   >

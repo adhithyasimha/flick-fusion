@@ -66,7 +66,7 @@ export default function TopRatedSection({ width = "100%", height = "300px" }) {
 
   return (
     <div style={{ margin: "0", padding: "0", marginLeft: "2%" }}>
-      <div className="heading-section" style={{ marginTop: "-20%", padding: "0" }}>
+      <div className="heading-section" style={{ marginTop: "-10%", padding: "0" }}>
         <h1 className="scroll-m-20 font-semibold tracking-tight">
           Top Rated Movies
         </h1>

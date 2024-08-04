@@ -116,28 +116,27 @@ export default function Moviesection() {
 
   return (
     <div style={{ margin: "-25px 0 0 0", padding: 0, marginLeft: "2%" }}>
-      <div className="heading-section" style={{ margin: 0, padding: 0 }}>
-        <h1
-          className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
-          style={{ marginTop: "-8%", marginBottom: "2%" }}
-        >
-          Cinema
-        </h1>
-      </div>
-      <div
-        className="movie-section"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(6, 1fr)",
-          gridTemplateRows: "repeat(3, 250px)",
-          gap: "15px",
-          maxWidth: "97%",
-          height: "900px",
-          overflow: "hidden",
-          margin: 0,
-          padding: 0,
-        }}
+    <div className="heading-section" style={{ margin: 0, padding: 0 }}>
+      <h1
+        className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
+        style={{ marginTop: "-8%", marginBottom: "2%" }}
       >
+        Cinema
+      </h1>
+    </div>
+    <div
+      className="movie-section"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(6, 1fr)",
+        gridAutoRows: "310px", // Set a consistent row height
+        gap: "15px",
+        maxWidth: "97%",
+        height: "950px",
+        overflow: "hidden",
+        margin: 0,
+      }}
+    >
         {loading || !movies.length
           ? Array.from({ length: 18 }).map((_, index) => (
               <div key={index} className="bloom-effect">
@@ -148,7 +147,7 @@ export default function Moviesection() {
                       alignItems: "center",
                       justifyContent: "center",
                       padding: 0,
-                      height: "250px",
+                      height: "300px",
                       border: "none",
                     }}
                   >
@@ -169,9 +168,10 @@ export default function Moviesection() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      padding: 0,
-                      height: "250px",
+                      padding: "0",
+                      height: "300px",
                       border: "none",
+                      marginBottom: "50%", // Add vertical gap between cards
                     }}
                   >
                     <img
