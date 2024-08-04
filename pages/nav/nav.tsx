@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ForwardedRef,useEffect } from "react";
+import React, { useState, ForwardedRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -166,8 +166,22 @@ export function Topnav() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
-  const handleSearchClick = () => {
-    setIsExpanded(true);
+  const handleSearchItemClick = (id: number, mediaType: string) => {
+    fetch('/api/content', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, mediaType }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response if needed
+      window.location.href = `/player?id=${id}&type=${mediaType}`;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   };
 
   const handleBlur = () => {
@@ -222,10 +236,9 @@ export function Topnav() {
                 <NavigationMenuTrigger>Genre</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-0 p-4 md:w-[300px] md:grid-cols-2 lg:w-[350px]">
-                  {genre.map((genre) => (
-  <ListItem key={genre.id} title={genre.name} href={`/genre/${genre.id}`} />
-))}
-
+                    {genre.map((genre) => (
+                      <ListItem key={genre.id} title={genre.name} href={`/genre/${genre.id}`} />
+                    ))}
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -252,18 +265,54 @@ export function Topnav() {
             <Input
               className={`search-bar ${isExpanded ? 'expanded' : ''}`}
               placeholder="Search movies and TV shows..."
-              onClick={handleSearchClick}
-              onBlur={handleBlur}
+              onClick={() => setIsExpanded(true)}
+              onBlur={() => {
+                setTimeout(() => setIsExpanded(false), 200);
+              }}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {isExpanded && searchResults.length > 0 && (
               <div className="search-results">
                 {searchResults.map((result) => (
-                  <div key={result.id} className="search-result-item">
-                    {result.media_type === 'movie' ? result.title : result.name}
-                    <span className="media-type">({result.media_type})</span>
-                  </div>
+                  <Link 
+                    href={`/player?id=${result.id}&type=${result.media_type}`}
+                    key={result.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      fetch('/api/content', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id: result.id, mediaType: result.media_type }),
+                      })
+                      .then(response => response.json())
+                      .then(data => {
+                        // Handle the response if needed
+                        window.location.href = `/player?id=${result.id}&type=${result.media_type}`;
+                      })
+                      .catch(error => {
+                        console.error('Error:', error);
+                      });
+                    }}
+                  >
+                    <div className="search-result-item">
+                      {result.poster_path && (
+                        <img 
+                          src={`https://image.tmdb.org/t/p/w92${result.poster_path}`} 
+                          alt={result.title || result.name} 
+                          className="result-poster"
+                        />
+                      )}
+                      <div className="result-info">
+                        <span className="result-title">
+                          {result.media_type === 'movie' ? result.title : result.name}
+                        </span>
+                        <span className="media-type">({result.media_type})</span>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
             )}
