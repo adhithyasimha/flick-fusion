@@ -130,7 +130,7 @@ export default function Moviesection() {
         display: "grid",
         gridTemplateColumns: "repeat(6, 1fr)",
         gridAutoRows: "310px", // Set a consistent row height
-        gap: "15px",
+        gap: "10px",
         maxWidth: "97%",
         height: "950px",
         overflow: "hidden",
@@ -171,7 +171,7 @@ export default function Moviesection() {
                       padding: "0",
                       height: "300px",
                       border: "none",
-                      marginBottom: "50%", // Add vertical gap between cards
+                    
                     }}
                   >
                     <img
