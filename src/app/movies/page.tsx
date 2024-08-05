@@ -9,7 +9,6 @@ import { DialogBox } from "@/components/DialogBox";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/pagination";
 import {
   Breadcrumb,
-  BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -49,16 +47,18 @@ interface Cast {
 }
 
 const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+const TMDB_API_URL = (page: number) =>
+  `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`;
 const GENRES_API_URL = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_API_KEY}`;
-const POST_CONTENT_API_URL = '/api/content';
+const POST_CONTENT_API_URL = "/api/content";
 
 export default function Moviesection() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [currentPage, setCurrentPage] = useState(1); // State to keep track of the current page
-  const [totalPages, setTotalPages] = useState(1); // State to keep track of the total pages
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
@@ -72,11 +72,13 @@ export default function Moviesection() {
     };
 
     const fetchMovies = async (page: number) => {
-      setLoading(true);
       try {
-        const response = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`);
-        setMovies(response.data.results.slice(0, 18)); // Limit to 18 movies
-        setTotalPages(response.data.total_pages); // Set the total pages from the response
+        const response = await axios.get(TMDB_API_URL(page));
+        const filteredMovies = response.data.results.filter(
+          (movie: Movie) => movie.poster_path
+        );
+        setMovies(filteredMovies);
+        setTotalPages(response.data.total_pages);
       } catch (error) {
         console.error("Error fetching movies:", error);
       } finally {
@@ -85,8 +87,8 @@ export default function Moviesection() {
     };
 
     fetchGenres();
-    fetchMovies(currentPage); // Fetch movies based on the current page
-  }, [currentPage]); // Re-run the effect when the current page changes
+    fetchMovies(currentPage);
+  }, [currentPage]);
 
   const handleCardClick = (movie: Movie) => {
     setSelectedMovie(movie);
@@ -127,16 +129,56 @@ export default function Moviesection() {
   const handlePlayClick = async () => {
     if (selectedMovie) {
       await postContentData(selectedMovie);
-      localStorage.setItem('movieId', selectedMovie.id.toString());
-      localStorage.setItem('mediaType', 'movie');
+      localStorage.setItem("movieId", selectedMovie.id.toString());
+      localStorage.setItem("mediaType", "movie");
       router.push(`/player`);
     } else {
       console.error("No movie selected to play");
     }
   };
 
-  const handlePageClick = (page: number) => {
-    setCurrentPage(page); // Update the current page state
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    const maxVisiblePages = 3;
+
+    let startPage = Math.max(currentPage - 1, 1);
+    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    }
+
+    if (currentPage > 1) {
+      pages.push(
+        <PaginationItem key="prev">
+          <PaginationPrevious href="#" onClick={() => handlePageChange(currentPage - 1)} />
+        </PaginationItem>
+      );
+    }
+
+    for (let page = startPage; page <= endPage; page++) {
+      pages.push(
+        <PaginationItem key={page}>
+          <PaginationLink href="#" isActive={page === currentPage} onClick={() => handlePageChange(page)}>
+            {page}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    if (currentPage < totalPages) {
+      pages.push(
+        <PaginationItem key="next">
+          <PaginationNext href="#" onClick={() => handlePageChange(currentPage + 1)} />
+        </PaginationItem>
+      );
+    }
+
+    return pages;
   };
 
   return (
@@ -145,7 +187,7 @@ export default function Moviesection() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/" style={{fontSize:"15px"}}>Home</BreadcrumbLink>
+              <BreadcrumbLink href="/" style={{ fontSize: "15px" }}>Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -180,7 +222,6 @@ export default function Moviesection() {
                     padding: 0,
                     height: "300px", // Increased card height
                     border: "none",
-
                   }}
                 >
                   <Skeleton className="w-full h-full" />
@@ -210,16 +251,14 @@ export default function Moviesection() {
                     alt={movie.title}
                     className="w-full h-full object-cover"
                     onLoad={(e) => {
-                      const skeleton =
-                        e.currentTarget.nextElementSibling as HTMLElement;
+                      const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
                       if (skeleton) {
                         skeleton.style.display = "none";
                       }
                     }}
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
-                      const skeleton =
-                        e.currentTarget.nextElementSibling as HTMLElement;
+                      const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
                       if (skeleton) {
                         skeleton.style.display = "block";
                       }
@@ -231,24 +270,10 @@ export default function Moviesection() {
             </div>
           ))}
       </div>
-      <div className="pagination">
+      <div className="pagination" style={{ margin: "2rem 0", textAlign: "center" }}>
         <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" onClick={() => handlePageClick(currentPage > 1 ? currentPage - 1 : 1)} />
-            </PaginationItem>
-            {Array.from({ length: totalPages }).map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink href="#" isActive={index + 1 === currentPage} onClick={() => handlePageClick(index + 1)}>
-                  {index + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext href="#" onClick={() => handlePageClick(currentPage < totalPages ? currentPage + 1 : totalPages)} />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination> 
+          <PaginationContent>{renderPagination()}</PaginationContent>
+        </Pagination>
       </div>
 
       {selectedMovie && (
