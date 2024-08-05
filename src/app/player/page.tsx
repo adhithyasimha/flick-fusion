@@ -39,7 +39,7 @@ export default function Player() {
 
   return (
     <div className="player-container">
-      <AspectRatio ratio={16 / 9} className="bg-muted">
+      <AspectRatio ratio={20 / 10} className="bg-muted" style={{marginTop:"5%"}}>
         <iframe 
           src={playerUrl}
           title="Player"
