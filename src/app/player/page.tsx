@@ -19,14 +19,11 @@ export default function Player() {
       try {
         const response = await axios.get('/api/content');
         const { id, media_type } = response.data;
-        const mediaTypeElement = document.getElementById("media_type");
-        if (mediaTypeElement) {
-          const mediaTypeValue = (mediaTypeElement as HTMLInputElement).value;
-          setMediaType(mediaTypeValue);
-        }
+        
+        setMediaType(media_type); 
 
         if (id && media_type) {
-          const url = `https://vidsrc.net/embed/${media_type}/${id}?autoplay=1`;
+          const url = `https://vidsrc.xyz/embed/${media_type}/${id}?autoplay=1`;
           setPlayerUrl(url);
         } else {
           setError('Content data is missing.');
@@ -34,11 +31,8 @@ export default function Player() {
       } catch (error) {
         console.error("Error fetching content data:", error);
         setError('Failed to load content. Please try again.');
-        
       }
     };
-
-    
 
     fetchContentData();
   }, []);
@@ -50,40 +44,40 @@ export default function Player() {
   if (!playerUrl) {
     return <div>Loading...</div>;
   }
+  
 
   return (
     <div>
-      <div className='breadcrumb-container'style={{ margin: 0, padding: 0, marginTop: "4%", marginBottom: "2%" }}>
-      <Breadcrumb>
+      <div className='breadcrumb-container' style={{ margin: 0, padding: 0, marginTop: "4%", marginBottom: "2%" }}>
+        <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/" style={{ fontSize: "15px" }}>Home</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage id ="media_type"style={{ fontSize: "15px" }}>{mediaType}</BreadcrumbPage>
+              <BreadcrumbPage style={{ fontSize: "15px" }}>{mediaType}</BreadcrumbPage>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
+              <BreadcrumbPage style={{ fontSize: "15px" }}>i</BreadcrumbPage>
             </BreadcrumbItem>
-            <BreadcrumbPage style={{ fontSize: "15px" }}>i</BreadcrumbPage>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-    <div className="player-container">
-      <AspectRatio ratio={20 / 10} className="bg-muted" style={{marginTop:"1%"}}>
-        <iframe 
-          src={playerUrl}
-          title="Player"
-          allowFullScreen
-          allow="autoplay"
-          referrerPolicy="origin"
-          style={{ width: '100%', height: '100%', border: 'none' }} // Ensure iframe fits within the AspectRatio container
-        ></iframe>
-      </AspectRatio>
-    </div>
-
+      <div className="player-container">
+        <AspectRatio ratio={20 / 10} className="bg-muted" style={{marginTop:"1%"}}>
+          <iframe 
+            src={playerUrl}
+            title="Player"
+            allowFullScreen
+            allow="autoplay"
+            referrerPolicy="origin"
+            style={{ width: '100%', height: '100%', border: 'none' }}
+          ></iframe>
+        </AspectRatio>
+      </div>
     </div>
   );
 }
