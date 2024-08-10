@@ -7,39 +7,107 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface CastMember {
+  cast_id: number;
+  name: string;
+  profile_path: string;
+}
+
+interface Season {
+  id: number;
+  season_number: number;
+  name: string;
+  episode_count: number;
+}
+
+interface Episode {
+  id: number;
+  name: string;
+  episode_number: number;
+}
+
+interface Recommendation {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  media_type?: string;
+}
 
 export default function Player() {
+  const [contentId, setContentId] = useState<string | null>(null);
   const [playerUrl, setPlayerUrl] = useState('');
   const [error, setError] = useState('');
   const [mediaType, setMediaType] = useState('');
   const [title, setTitle] = useState('');
-  const [genre, setGenre] = useState([]);
+  const [genre, setGenre] = useState<Genre[]>([]);
   const [description, setDescription] = useState('');
   const [rating, setRating] = useState('');
-  const [cast, setCast] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
-  const [seasons, setSeasons] = useState([]);
+  const [cast, setCast] = useState<CastMember[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [seasons, setSeasons] = useState<Season[]>([]);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [selectedSeason, setSelectedSeason] = useState<string>('');
 
-  const fetchContentData = async (id, mediaType) => {
+  const fetchContentData = async (id: string, mediaType: string) => {
     try {
       setPlayerUrl(`https://vidsrc.xyz/embed/${mediaType}/${id}?autoplay=1`);
 
       // Fetch data from TMDB API
-      const tmdbUrl = `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&append_to_response=credits,recommendations,season`;
+      const tmdbUrl = `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&append_to_response=credits,recommendations,seasons`;
       const tmdbResponse = await axios.get(tmdbUrl);
 
       setTitle(tmdbResponse.data.title || tmdbResponse.data.name);
       setGenre(tmdbResponse.data.genres);
       setDescription(tmdbResponse.data.overview);
       setRating(tmdbResponse.data.vote_average.toFixed(1));
-      setCast(tmdbResponse.data.credits.cast.slice(0, 6)); // Fetch top 6 cast members
-      setRecommendations(tmdbResponse.data.recommendations.results.slice(0, 10)); // Fetch top 10 recommendations
+      setCast(tmdbResponse.data.credits.cast.slice(0, 6));
+      setRecommendations(tmdbResponse.data.recommendations.results.slice(0, 10));
+      setMediaType(mediaType);
+
       if (mediaType === 'tv') {
         setSeasons(tmdbResponse.data.seasons);
+        if (tmdbResponse.data.seasons.length > 0) {
+          setSelectedSeason(tmdbResponse.data.seasons[0].season_number.toString());
+          await fetchEpisodes(id, tmdbResponse.data.seasons[0].season_number);
+        } else {
+          setSeasons([]);
+          setEpisodes([]);
+          setSelectedSeason('');
+        }
+      } else {
+        setSeasons([]);
+        setEpisodes([]);
+        setSelectedSeason('');
       }
     } catch (error) {
       console.error("Error fetching content data:", error);
       setError('Failed to load content. Please try again.');
+    }
+  };
+
+  const fetchEpisodes = async (tvId: string, seasonNumber: number) => {
+    try {
+      const episodesUrl = `https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
+      const episodesResponse = await axios.get(episodesUrl);
+      setEpisodes(episodesResponse.data.episodes);
+    } catch (error) {
+      console.error("Error fetching episodes:", error);
     }
   };
 
@@ -50,11 +118,10 @@ export default function Player() {
         const { id, media_type } = response.data;
 
         if (id && media_type) {
+          setContentId(id);
           sessionStorage.setItem('contentId', id);
           sessionStorage.setItem('mediaType', media_type);
-
-          setMediaType(media_type);
-          fetchContentData(id, media_type);
+          await fetchContentData(id, media_type);
         } else {
           setError('Content data is missing.');
         }
@@ -67,14 +134,27 @@ export default function Player() {
     fetchInitialData();
   }, []);
 
-  const handleCardClick = async (item) => {
-    const id = item.id;
-    const mediaType = item.media_type || 'movie'; // Default to movie if media_type is undefined
-    await fetchContentData(id, mediaType);
+  useEffect(() => {
+    if (contentId) {
+      const mediaType = sessionStorage.getItem('mediaType') || 'movie';
+      fetchContentData(contentId, mediaType);
+    }
+  }, [contentId]);
+
+  const handleCardClick = (item: Recommendation) => {
+    const id = item.id.toString();
+    const mediaType = item.media_type || 'movie';
+    setContentId(id);
+    sessionStorage.setItem('contentId', id);
+    sessionStorage.setItem('mediaType', mediaType);
   };
 
-  const handleSkipIntro = () => {
-    // Skip intro functionality goes here
+  const handleSeasonChange = async (value: string) => {
+    setSelectedSeason(value);
+    const tvId = sessionStorage.getItem('contentId');
+    if (tvId) {
+      await fetchEpisodes(tvId, parseInt(value));
+    }
   };
 
   if (error) {
@@ -118,13 +198,6 @@ export default function Player() {
             style={{ width: '100%', height: '100%', border: 'none' }}
           ></iframe>
         </AspectRatio>
-        <button
-          className="skip-intro-button"
-          onClick={handleSkipIntro}
-          style={{ position: 'absolute', top: '10%', right: '5%', zIndex: 10 }}
-        >
-          Skip Intro
-        </button>
       </div>
 
       {/* Movie/TV Show Info */}
@@ -138,20 +211,31 @@ export default function Player() {
         {mediaType === 'tv' && (
           <div className="seasons-box" style={{ marginTop: '16px' }}>
             <h2 className="text-xl font-bold">Seasons</h2>
-            <div className="seasons-list" style={{ display: 'flex', gap: '8px', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-              {seasons.map((season) => (
-                <div key={season.id} className="season-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w200${season.poster_path}`}
-                    alt={`Season ${season.season_number}`}
-                    width={150}
-                    height={225}
-                    style={{ objectFit: 'cover' }}
-                  />
-                  <span>Season {season.season_number}</span>
-                </div>
-              ))}
-            </div>
+            <Select onValueChange={handleSeasonChange} value={selectedSeason}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a season" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Seasons</SelectLabel>
+                  {seasons.map((season) => (
+                    <SelectItem key={season.id} value={season.season_number.toString()}>
+                      Season {season.season_number}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {episodes.length > 0 && (
+              <div className="episodes-list" style={{ marginTop: '16px' }}>
+                <h3 className="text-lg font-semibold">Episodes</h3>
+                <ul>
+                  {episodes.map((episode) => (
+                    <li key={episode.id}>Episode {episode.episode_number}: {episode.name}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
         <p style={{ marginTop: '16px' }}>{description}</p>
@@ -173,22 +257,38 @@ export default function Player() {
       </div>
 
       {/* Recommendations Section */}
-      <div className="recommendations-section" style={{ marginTop: '32px', overflowX: 'auto', whiteSpace: 'nowrap', marginLeft: '2%' }}>
+      <div className="recommendations-section" style={{ marginTop: '32px', marginLeft: '2%' }}>
         <h2 className="text-xl font-bold">Recommended for You</h2>
-        <div className="recommendations-list" style={{ display: 'flex', gap: '10px', marginTop: '8px', overflowY: 'hidden' }}>
+        <div className="recommendations-list" style={{ 
+          display: 'flex', 
+          gap: '10px', 
+          marginTop: '8px', 
+          overflowX: 'auto', 
+          overflowY: 'hidden',
+          whiteSpace: 'nowrap',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}>
+          <style jsx global>{`
+            .recommendations-list::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           {recommendations.length === 0 ? (
-            <Skeleton count={10} width={200} height={300} style={{ marginRight: '8px' }} />
+            Array(10).fill(0).map((_, index) => (
+              <Skeleton key={index} width={200} height={300} style={{ marginRight: '8px' }} />
+            ))
           ) : (
             recommendations.map((rec) => (
               <div
                 key={rec.id}
                 className="recommendation-item flex-shrink-0 bloom-effect"
                 style={{ width: "200px", cursor: 'pointer' }}
-                onClick={() => handleCardClick({ id: rec.id, media_type: mediaType })}
+                onClick={() => handleCardClick(rec)}
               >
                 <Image
                   src={`https://image.tmdb.org/t/p/w200${rec.poster_path}`}
-                  alt={rec.title || rec.name}
+                  alt={rec.title || rec.name || ''}
                   width={200}
                   height={300}
                   style={{ objectFit: 'cover' }}
