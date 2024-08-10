@@ -24,13 +24,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-interface Movie {
+interface TVShow {
   id: number;
-  title: string;
+  name: string;
   poster_path: string;
   backdrop_path?: string;
   overview?: string;
-  release_date?: string;
+  first_air_date?: string;
   original_language?: string;
   genres?: { name: string }[];
 }
@@ -41,7 +41,7 @@ interface Genre {
 }
 
 interface Cast {
-  cast_id: number;
+  id: number;
   character: string;
   name: string;
   profile_path: string;
@@ -49,15 +49,15 @@ interface Cast {
 
 const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const TMDB_API_URL = (page: number) =>
-  `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`;
-const GENRES_API_URL = `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_API_KEY}`;
+  `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&language=en-US&page=${page}`;
+const GENRES_API_URL = `https://api.themoviedb.org/3/genre/tv/list?api_key=${TMDB_API_KEY}`;
 const POST_CONTENT_API_URL = "/api/content";
 
-export default function Tvshows() {
-  const [tv, setTvshows] = useState<Tvshows[]>([]);
+export default function TVShowSection() {
+  const [tvShows, setTVShows] = useState<TVShow[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedMovie, setSelectedMovie] = useState<Tvshows | null>(null);
+  const [selectedShow, setSelectedShow] = useState<TVShow | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
@@ -72,48 +72,48 @@ export default function Tvshows() {
       }
     };
 
-    const fetchMovies = async (page: number) => {
+    const fetchTVShows = async (page: number) => {
       try {
         const response = await axios.get(TMDB_API_URL(page));
-        const filteredMovies = response.data.results.filter(
-          (movie: Tvshows) => movie.poster_path
+        const filteredShows = response.data.results.filter(
+          (show: TVShow) => show.poster_path
         );
-        setTv(filteredMovies);
+        setTVShows(filteredShows);
         setTotalPages(response.data.total_pages);
       } catch (error) {
-        console.error("Error fetching movies:", error);
+        console.error("Error fetching TV shows:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchGenres();
-    fetchMovies(currentPage);
+    fetchTVShows(currentPage);
   }, [currentPage]);
 
-  const handleCardClick = (movie: Tvshows) => {
-    setSelectedMovie(movie);
+  const handleCardClick = (show: TVShow) => {
+    setSelectedShow(show);
   };
 
   const handleCloseDialog = () => {
-    setSelectedMovie(null);
+    setSelectedShow(null);
   };
 
-  const postContentData = async (movie: Tvshows) => {
+  const postContentData = async (show: TVShow) => {
     try {
       const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${TMDB_API_KEY}`
+        `https://api.themoviedb.org/3/tv/${show.id}/credits?api_key=${TMDB_API_KEY}`
       );
       const cast = response.data.cast.slice(0, 5); // Limit to top 5 cast members
 
-      const genreNames = movie.genres?.map((genre) => genre.name) || [];
+      const genreNames = show.genres?.map((genre) => genre.name) || [];
 
       const dataToSend = {
-        id: movie.id,
-        media_type: "movie",
-        title: movie.title,
+        id: show.id,
+        media_type: "tv",
+        title: show.name,
         genres: genreNames,
-        release_year: movie.release_date?.split("-")[0],
+        release_year: show.first_air_date?.split("-")[0],
         cast: cast.map((member: Cast) => ({
           name: member.name,
           photo: member.profile_path,
@@ -128,13 +128,13 @@ export default function Tvshows() {
   };
 
   const handlePlayClick = async () => {
-    if (selectedMovie) {
-      await postContentData(selectedMovie);
-      localStorage.setItem("movieId", selectedMovie.id.toString());
-      localStorage.setItem("mediaType", "movie");
+    if (selectedShow) {
+      await postContentData(selectedShow);
+      localStorage.setItem("tvShowId", selectedShow.id.toString());
+      localStorage.setItem("mediaType", "tv");
       router.push(`/player`);
     } else {
-      console.error("No movie selected to play");
+      console.error("No TV show selected to play");
     }
   };
 
@@ -192,14 +192,14 @@ export default function Tvshows() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage style={{ fontSize: "15px" }}>Movies</BreadcrumbPage>
+              <BreadcrumbPage style={{ fontSize: "15px" }}>TV Shows</BreadcrumbPage>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
           </BreadcrumbList>
         </Breadcrumb>
       </div>
       <div
-        className="movie-section"
+        className="tv-show-section"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(6, 1fr)",
@@ -211,7 +211,7 @@ export default function Tvshows() {
           margin: 0
         }}
       >
-        {loading || !Tvshows.length
+        {loading || !tvShows.length
           ? Array.from({ length: 18 }).map((_, index) => (
             <div key={index} className="bloom-effect">
               <Card style={{ border: "none", padding: 0 }}>
@@ -221,7 +221,7 @@ export default function Tvshows() {
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 0,
-                    height: "300px", // Increased card height
+                    height: "300px",
                     border: "none",
                   }}
                 >
@@ -230,11 +230,11 @@ export default function Tvshows() {
               </Card>
             </div>
           ))
-          : Tvshows.map((Tvshows) => (
+          : tvShows.map((show) => (
             <div
-              key={tv.id}
+              key={show.id}
               className="bloom-effect"
-              onClick={() => handleCardClick(tv)}
+              onClick={() => handleCardClick(show)}
             >
               <Card style={{ border: "none", padding: 0 }}>
                 <CardContent
@@ -247,9 +247,11 @@ export default function Tvshows() {
                     border: "none",
                   }}
                 >
-                  <img
-                    src={`https://image.tmdb.org/t/p/w500${Tvshows.poster_path}`}
-                    alt={tv.title}
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
+                    alt={show.name}
+                    width={500}
+                    height={750}
                     className="w-full h-full object-cover"
                     onLoad={(e) => {
                       const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
@@ -277,18 +279,18 @@ export default function Tvshows() {
         </Pagination>
       </div>
 
-      {selectedMovie && (
+      {selectedShow && (
         <DialogBox
-          open={!!selectedMovie}
+          open={!!selectedShow}
           onClose={handleCloseDialog}
           onPlayClick={handlePlayClick}
           mediaDetails={{
-            title: selectedMovie.title,
-            release_date: selectedMovie.release_date,
-            original_language: selectedMovie.original_language,
-            overview: selectedMovie.overview,
-            genres: selectedMovie.genres,
-            backdrop_path: selectedMovie.backdrop_path,
+            title: selectedShow.name,
+            release_date: selectedShow.first_air_date,
+            original_language: selectedShow.original_language,
+            overview: selectedShow.overview,
+            genres: selectedShow.genres,
+            backdrop_path: selectedShow.backdrop_path,
           }}
         />
       )}
