@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
@@ -21,7 +22,7 @@ const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const POPULAR_MOVIE_API_URL = `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}`;
 const POST_CONTENT_API_URL = '/api/content';
 
-export function Banner() {
+export default function Banner() {
   const [mediaItem, setMediaItem] = useState<MediaItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
@@ -101,7 +102,7 @@ export function Banner() {
         </Card>
       </div>
       <div className="buttons-container">
-        <Button className="button" variant={"destructive"} onClick={handlePlayClick}>Play</Button>
+        <Button className="button" variant="destructive" onClick={handlePlayClick}>Play</Button>
         <Button variant="outline" className="button info" onClick={handleInfoClick}>Info</Button>
       </div>
 
@@ -115,10 +116,8 @@ export function Banner() {
           release_date: mediaItem.release_date,
           original_language: mediaItem.original_language,
         }}
-        onPlayClick={handlePlayClick} // Add onPlayClick prop
+        onPlayClick={handlePlayClick}
       />
     </div>
   );
 }
-
-
