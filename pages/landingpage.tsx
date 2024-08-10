@@ -7,7 +7,7 @@ import Moviesection from "./movie-section/movie-section";
 import TvSection from "./tv-section/tv-section";
 import TopRatedSection from "./top-rated-section/top-section";
 
-export function Landingpage() {
+export  default function Landingpage() {
   return (
     <div>
       <Topnav />
