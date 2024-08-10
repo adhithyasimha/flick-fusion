@@ -5,7 +5,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
+import { DialogBox } from "@/components/DialogBox"; 
+import Image from "next/image";
 
 interface TVShow {
   id: number;
@@ -67,7 +68,7 @@ export default function TvSection() {
   };
 
   return (
-    <div style={{ margin: "6% 0 0 0", padding: 0, marginLeft: "3%" }}>
+    <div style={{ margin: "6% 0 0 0", padding: 0, marginLeft: "2%" }}>
       <div className="heading-section" style={{ margin: 0, padding: 0 }}>
         <h1
           className="scroll-m-20 font-semibold tracking-tight md: 'xl'"
@@ -136,9 +137,11 @@ export default function TvSection() {
                       border: "none",
                     }}
                   >
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
                       alt={show.name}
+                      width={500}
+                      height={750}
                       className="w-full h-full object-cover"
                       onLoad={(e) => {
                         const skeleton =

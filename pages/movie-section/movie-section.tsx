@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DialogBox } from "@/components/DialogBox";
+import Image from "next/image";
 
 interface Movie {
   id: number;
@@ -173,9 +174,11 @@ export default function Moviesection() {
                 border: "none",
               }}
                   >
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                       alt={movie.title}
+                      width={500}
+                      height={750}
                       className="w-full h-full object-cover"
                       onLoad={(e) => {
                         const skeleton =
