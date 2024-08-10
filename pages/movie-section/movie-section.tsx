@@ -55,7 +55,7 @@ export default function Moviesection() {
     const fetchMovies = async () => {
       try {
         const response = await axios.get(TMDB_API_URL);
-        setMovies(response.data.results.slice(0, 18)); // Limit to 18 movies
+        setMovies(response.data.results.slice(0, 18)); // 18 movies
       } catch (error) {
         console.error("Error fetching movies:", error);
       } finally {
@@ -129,7 +129,7 @@ export default function Moviesection() {
   style={{
     display: "grid",
     gridTemplateColumns: "repeat(6, 1fr)",
-    gridAutoRows: "310px", // Set a consistent row height
+    gridAutoRows: "310px", 
     gap: "15px",
     maxWidth: "97%",
     height: "950px",
@@ -147,7 +147,7 @@ export default function Moviesection() {
                 alignItems: "center",
                 justifyContent: "center",
                 padding: 0,
-                height: "300px", // Increased card height
+                height: "300px", 
                 border: "none",
               }}
                   >
