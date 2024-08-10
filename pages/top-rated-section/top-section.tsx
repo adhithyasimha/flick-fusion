@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DialogBox } from "@/components/DialogBox";
 import './top-section.css';
+import Image from "next/image";
 
 interface Media {
   id: number;
@@ -106,9 +107,11 @@ export default function TopRatedSection({ width = "100%", height = "300px" }) {
               >
                 <Card style={{ border: "none", padding: 0 }}>
                   <CardContent style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 0, height: "150px", border: "none" }}>
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
-                      alt={item.title || item.name}
+                      alt={item.title || item.name ||""}
+                      width={500}
+                      height={750}
                       className="w-full h-full object-cover"
                       onLoad={(e) => {
                         const skeleton = e.currentTarget.nextElementSibling as HTMLElement;
