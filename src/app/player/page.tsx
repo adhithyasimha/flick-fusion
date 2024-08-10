@@ -66,7 +66,7 @@ export default function Player() {
 
   const fetchContentData = async (id: string, mediaType: string) => {
     try {
-      setPlayerUrl(`https://vidsrc.xyz/embed/${mediaType}/${id}?autoplay=1`);
+      setPlayerUrl(`https://vidsrc.pro/embed/${mediaType}/${id}?autoplay=1`);
 
       // Fetch data from TMDB API
       const tmdbUrl = `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&append_to_response=credits,recommendations,seasons`;
@@ -202,7 +202,7 @@ export default function Player() {
 
       {/* Movie/TV Show Info */}
       <div className='info-container' style={{ marginLeft: '2%', marginRight: '2%' }}>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-3xl" style={{ marginTop: "4%" }}>{title}</h1>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-3xl" style={{ marginTop: "2%" }}>{title}</h1>
         <div className="genre-box" style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           {genre.map((g) => (
             <span key={g.id} className="unclickable-box" style={{ padding: '8px 12px', backgroundColor: '#eee', color: "black" }}>{g.name}</span>
