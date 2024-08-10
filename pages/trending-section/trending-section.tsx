@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DialogBox } from "@/components/DialogBox"; // Import DialogBox component
+import Image from "next/image";
 
 interface Media {
   id: number;
@@ -138,9 +139,11 @@ export default function TrendingSection({ width = "100%", height = "300px" }) {
                       border: "none",
                     }}
                   >
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/original${item.backdrop_path}`}
-                      alt={item.title || item.name}
+                      alt={item.title || item.name ||""}
+                      width={500}
+                      height={750}
                       className="w-full h-full object-cover"
                       onLoad={(e) => {
                         const skeleton = e.currentTarget.nextElementSibling as HTMLElement;

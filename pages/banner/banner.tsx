@@ -6,6 +6,7 @@ import './banner.css';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DialogBox } from "@/components/DialogBox";
+import Image from "next/image";
 
 interface MediaItem {
   id: number;
@@ -83,9 +84,11 @@ export function Banner() {
       <div className="banner-container">
         <Card className="card">
           <CardContent className="card-content">
-            <img
+            <Image
               src={`https://image.tmdb.org/t/p/original${mediaItem.backdrop_path}`}
               alt={`Image of ${mediaItem.title}`}
+              width={1920}
+              height={1080}
               className="card-image"
             />
             <div className="overlay">

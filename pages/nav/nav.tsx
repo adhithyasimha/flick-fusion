@@ -16,6 +16,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import Image from "next/image";
 
 type ComponentType = {
   id: number;
@@ -312,9 +313,11 @@ export function Topnav() {
                   >
                     <div className="search-result-item">
                       {result.poster_path && (
-                        <img 
+                        <Image
                           src={`https://image.tmdb.org/t/p/w92${result.poster_path}`} 
-                          alt={result.title || result.name} 
+                          alt={result.title || result.name||""}
+                          width={92}
+                          height={138} 
                           className="result-poster"
                         />
                       )}
