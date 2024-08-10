@@ -179,23 +179,25 @@ export default function Player() {
   return (
     <div>
       {/* Breadcrumb */}
-      <div className='breadcrumb-container' style={{ margin: '4% 0 2%' }}>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/" style={{ fontSize: "15px" }}>Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage style={{ fontSize: "15px" }}>{mediaType}</BreadcrumbPage>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage style={{ fontSize: "15px" }}>{title}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+      <div className='breadcrumb-container' style={{ margin: '2% 0 2% 2%' }}>
+  <Breadcrumb>
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/" style={{ fontSize: "15px" }}>Home</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage style={{ fontSize: "15px" }}>
+          {mediaType === 'tv' ? 'TV' : 'Movies'}
+        </BreadcrumbPage>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage style={{ fontSize: "15px" }}>{title}</BreadcrumbPage>
+      </BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+</div>
 
       {/* Player */}
       <div className="player-container" style={{ position: 'relative' }}>
