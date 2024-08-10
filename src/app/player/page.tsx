@@ -7,15 +7,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from '@/components/ui/skeleton';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Genre {
   id: number;
@@ -63,6 +55,7 @@ export default function Player() {
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<string>('');
+  const [selectedEpisode, setSelectedEpisode] = useState<string>('');
 
   const fetchContentData = async (id: string, mediaType: string) => {
     try {
@@ -83,8 +76,9 @@ export default function Player() {
       if (mediaType === 'tv') {
         setSeasons(tmdbResponse.data.seasons);
         if (tmdbResponse.data.seasons.length > 0) {
-          setSelectedSeason(tmdbResponse.data.seasons[0].season_number.toString());
-          await fetchEpisodes(id, tmdbResponse.data.seasons[0].season_number);
+          const firstSeason = tmdbResponse.data.seasons[0].season_number;
+          setSelectedSeason(firstSeason.toString());
+          await fetchEpisodes(id, firstSeason);
         } else {
           setSeasons([]);
           setEpisodes([]);
@@ -106,6 +100,9 @@ export default function Player() {
       const episodesUrl = `https://api.themoviedb.org/3/tv/${tvId}/season/${seasonNumber}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`;
       const episodesResponse = await axios.get(episodesUrl);
       setEpisodes(episodesResponse.data.episodes);
+      if (episodesResponse.data.episodes.length > 0) {
+        setSelectedEpisode(episodesResponse.data.episodes[0].episode_number.toString());
+      }
     } catch (error) {
       console.error("Error fetching episodes:", error);
     }
@@ -154,6 +151,20 @@ export default function Player() {
     const tvId = sessionStorage.getItem('contentId');
     if (tvId) {
       await fetchEpisodes(tvId, parseInt(value));
+      // Update player URL with the first episode of the selected season
+      if (episodes.length > 0) {
+        const firstEpisode = episodes[0].episode_number;
+        setPlayerUrl(`https://vidsrc.pro/embed/tv/${tvId}/${value}/${firstEpisode}?autoplay=1`);
+        setSelectedEpisode(firstEpisode.toString());
+      }
+    }
+  };
+
+  const handleEpisodeChange = (value: string) => {
+    setSelectedEpisode(value);
+    const tvId = sessionStorage.getItem('contentId');
+    if (tvId && selectedSeason) {
+      setPlayerUrl(`https://vidsrc.pro/embed/tv/${tvId}/${selectedSeason}/${value}?autoplay=1`);
     }
   };
 
@@ -168,7 +179,7 @@ export default function Player() {
   return (
     <div>
       {/* Breadcrumb */}
-      <div className='breadcrumb-container' style={{ margin: 0, padding: 0, marginTop: "4%", marginBottom: "2%" }}>
+      <div className='breadcrumb-container' style={{ margin: '4% 0 2%' }}>
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -201,8 +212,8 @@ export default function Player() {
       </div>
 
       {/* Movie/TV Show Info */}
-      <div className='info-container' style={{ marginLeft: '2%', marginRight: '2%' }}>
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-3xl" style={{ marginTop: "2%" }}>{title}</h1>
+      <div className='info-container' style={{ margin: '0 2%' }}>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-3xl" style={{ marginTop: "3%" }}>{title}</h1>
         <div className="genre-box" style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           {genre.map((g) => (
             <span key={g.id} className="unclickable-box" style={{ padding: '8px 12px', backgroundColor: '#eee', color: "black" }}>{g.name}</span>
@@ -213,32 +224,40 @@ export default function Player() {
             <h2 className="text-xl font-bold">Seasons</h2>
             <Select onValueChange={handleSeasonChange} value={selectedSeason}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a season" />
+                <SelectValue placeholder="Select season" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Seasons</SelectLabel>
                   {seasons.map((season) => (
                     <SelectItem key={season.id} value={season.season_number.toString()}>
-                      Season {season.season_number}
+                      {season.name}
                     </SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {episodes.length > 0 && (
-              <div className="episodes-list" style={{ marginTop: '16px' }}>
-                <h3 className="text-lg font-semibold">Episodes</h3>
-                <ul>
-                  {episodes.map((episode) => (
-                    <li key={episode.id}>Episode {episode.episode_number}: {episode.name}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         )}
-        <p style={{ marginTop: '16px' }}>{description}</p>
+        {mediaType === 'tv' && episodes.length > 0 && (
+          <div className="episodes-box" style={{ marginTop: '16px' }}>
+            <h2 className="text-xl font-bold">Episodes</h2>
+            <Select onValueChange={handleEpisodeChange} value={selectedEpisode}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select episode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {episodes.map((episode) => (
+                    <SelectItem key={episode.id} value={episode.episode_number.toString()}>
+                      {episode.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+         <p style={{ marginTop: '16px' }}>{description}</p>
         <p style={{ marginTop: '16px' }}><strong>Rating:</strong> {rating}</p>
 
         {/* Cast Section */}
@@ -276,7 +295,7 @@ export default function Player() {
           `}</style>
           {recommendations.length === 0 ? (
             Array(10).fill(0).map((_, index) => (
-              <Skeleton key={index} width={200} height={300} style={{ marginRight: '8px' }} />
+              <Skeleton key={index}  style={{ marginRight: '8px',width:"200px",height:"300px" }} />
             ))
           ) : (
             recommendations.map((rec) => (
