@@ -162,7 +162,7 @@ interface SearchResult {
   first_air_date?: string;
 }
 
-export function Topnav() {
+export default function Topnav() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
