@@ -59,7 +59,7 @@ export default function Player() {
 
   const fetchContentData = async (id: string, mediaType: string) => {
     try {
-      setPlayerUrl(`https://vidsrc.pro/embed/${mediaType}/${id}?autoplay=1`);
+      setPlayerUrl(`https://embed.su/embed/${mediaType}/${id}?autoplay=1`);
 
       // Fetch data from TMDB API
       const tmdbUrl = `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&append_to_response=credits,recommendations,seasons`;
