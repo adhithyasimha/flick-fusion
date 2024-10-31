@@ -154,7 +154,7 @@ export default function Player() {
       // Update player URL with the first episode of the selected season
       if (episodes.length > 0) {
         const firstEpisode = episodes[0].episode_number;
-        setPlayerUrl(`https://vidsrc.pro/embed/tv/${tvId}/${value}/${firstEpisode}?autoplay=1`);
+        setPlayerUrl(`https://embed.su/embed/tv/${tvId}/${value}/${firstEpisode}?autoplay=1`);
         setSelectedEpisode(firstEpisode.toString());
       }
     }
@@ -164,7 +164,7 @@ export default function Player() {
     setSelectedEpisode(value);
     const tvId = sessionStorage.getItem('contentId');
     if (tvId && selectedSeason) {
-      setPlayerUrl(`https://vidsrc.pro/embed/tv/${tvId}/${selectedSeason}/${value}?autoplay=1`);
+      setPlayerUrl(`https://embed.su/embed/tv/${tvId}/${selectedSeason}/${value}?autoplay=1`);
     }
   };
 
